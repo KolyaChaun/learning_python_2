@@ -7,6 +7,7 @@ ALPHAVANTAGE_API_KEY = "LF4MQ3MEGDSC7LQV"
 MIDDLE_CURRENCY = "CHF"
 logs = []
 
+
 @dataclass
 class Price:
     value: float
@@ -37,7 +38,7 @@ class Price:
         )
 
         return Price(value=total_in_left_currency, currency=self.currency)
-    
+
 
 def convert(value: float, currency_from: str, currency_to: str) -> float:
     response: requests.Response = requests.get(
@@ -47,16 +48,23 @@ def convert(value: float, currency_from: str, currency_to: str) -> float:
     coefficient: float = float(
         result["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
     )
-    
-    logs.append({
-        'currency_from': result['Realtime Currency Exchange Rate']['1. From_Currency Code'],
-        'currency_to': result['Realtime Currency Exchange Rate']['3. To_Currency Code'],
-        'rate': result['Realtime Currency Exchange Rate']['5. Exchange Rate'],
-        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-    })
-    
-    return value * coefficient
 
+    logs.append(
+        {
+            "currency_from": result["Realtime Currency Exchange Rate"][
+                "1. From_Currency Code"
+            ],
+            "currency_to": result["Realtime Currency Exchange Rate"][
+                "3. To_Currency Code"
+            ],
+            "rate": result["Realtime Currency Exchange Rate"][
+                "5. Exchange Rate"
+            ],
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
+    )
+
+    return value * coefficient
 
 
 flight = Price(value=200, currency="UAH")
@@ -65,5 +73,5 @@ hotel = Price(value=1000, currency="USD")
 total: Price = flight + hotel
 print(total)
 
-with open('logs.json', 'a') as file:
-    json.dump({'results': logs}, file, indent=2)
+with open("logs.json", "a") as file:
+    json.dump({"results": logs}, file, indent=2)
