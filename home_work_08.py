@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from home_work_08_models import Post
 from time import time
+
+from home_work_08_models import Post
 
 
 class SocialChannel(ABC):
