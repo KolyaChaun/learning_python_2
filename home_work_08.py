@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from time import time
 
 from home_work_08_models import Post
 
@@ -30,17 +29,18 @@ class TwitterChannel(SocialChannel):
         print(f"Post on twitter massege: {message}")
 
 
-def channel_dispatcher(channel: SocialChannel, message: str) -> None:
-    channel.post_a_message(message)
+class PostScheduler:
+    def __init__(self, post: Post, channel: SocialChannel) -> None:
+        self.post = post
+        self.channel = channel
 
-
-def process_schedule(post: Post, channel: SocialChannel) -> None:
-    message = post.message
-    timestamp = post.timestamp
-    if timestamp <= time():
-        channel_dispatcher(channel, message)
-    else:
-        print(f"The message: '{message}' will be loaded on {channel.type}")
+    def process_schedule(self):
+        if self.post.ready_to_post():
+            self.channel.post_a_message(self.post.message)
+        else:
+            print(
+                f"The message: '{self.post.message}' will be loaded on {self.channel.type}"
+            )
 
 
 def main():
@@ -53,9 +53,13 @@ def main():
     twitter = TwitterChannel("Twitter", 1000)
     post_twitter = Post("Upload a post to Twitter", 123958454545)
 
-    process_schedule(post, youtube)
-    process_schedule(post_facebook, facebook)
-    process_schedule(post_twitter, twitter)
+    post_scheduler_youtube = PostScheduler(post, youtube)
+    post_scheduler_facebook = PostScheduler(post_facebook, facebook)
+    post_scheduler_twitter = PostScheduler(post_twitter, twitter)
+
+    post_scheduler_youtube.process_schedule()
+    post_scheduler_facebook.process_schedule()
+    post_scheduler_twitter.process_schedule()
 
 
 if __name__ == "__main__":
