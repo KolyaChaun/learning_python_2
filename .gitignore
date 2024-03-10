@@ -2,3 +2,4 @@
 venv
 .ruff_cache
 rockyou.txt
+filekey.key
